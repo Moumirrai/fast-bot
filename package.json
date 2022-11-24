@@ -1,0 +1,36 @@
+{
+  "name": "bot-template-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "watch:start": "tsc-watch --onSuccess \"node --inspect ./dist/index.js\"",
+    "deploy": "node dist/struct/CommandDeployer.js",
+    "deploy:remove": "node dist/struct/CommandDeployer.js --remove",
+    "format": "prettier --config .prettierrc --write \"src/**/*.ts\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node-fetch": "^2.6.2",
+    "axios": "^0.27.2",
+    "axios-cookiejar-support": "^4.0.3",
+    "cheerio": "^1.0.0-rc.12",
+    "discord.js": "^14.3.0",
+    "dotenv": "^14.3.2",
+    "enmap": "^5.9.2",
+    "form-data": "^4.0.0",
+    "hash-it": "^5.0.2",
+    "mongoose": "^6.4.6",
+    "node-cron": "^3.0.2",
+    "node-fetch-cookies": "^2.0.4",
+    "node-html-parser": "^6.1.4",
+    "rate-limiter-flexible": "^2.3.7",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "tsc-watch": "^4.6.0"
+  }
+}

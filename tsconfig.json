@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"rootDir": "src",
+		"outDir": "dist",
+		"skipLibCheck": true,
+		"target": "ESNEXT"
+	},
+	"include": ["src"]
+}
