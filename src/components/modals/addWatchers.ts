@@ -2,7 +2,7 @@ import {
   ActionRowBuilder,
   ModalBuilder,
   TextInputBuilder,
-  SelectMenuOptionBuilder,
+  SelectMenuBuilder,
   TextInputStyle,
   ModalActionRowComponentBuilder
 } from 'discord.js';
@@ -12,7 +12,23 @@ export default function createModal(): ModalBuilder {
     .setCustomId('addWatchers')
     .setTitle('Add new watchers');
 
-  const subjectMenu = new SelectMenuOptionBuilder()
+  const subjectMenu = new SelectMenuBuilder()
+  .addOptions([
+    {
+      label: 'Channel',
+      value: 'channel',
+      description: 'Watch a channel',
+      emoji: '📺'
+    },
+    {
+      label: 'Role',
+      value: 'role',
+      description: 'Watch a role',
+      emoji: '👥'
+    },
+  ])
+  .setPlaceholder('Select a subject')
+  .setCustomId('subject');
 
   //TODO: fix modals
 
@@ -26,7 +42,7 @@ export default function createModal(): ModalBuilder {
 
   const firstActionRow =
     new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
-      favoriteColorInput
+      favoriteColorInput, subjectMenu
     );
 
   modal.addComponents(firstActionRow);
