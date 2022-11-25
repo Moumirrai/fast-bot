@@ -94,6 +94,8 @@ export const scrape = async (scrapperClient: AxiosInstance): Promise<Array<Subje
           }
         });
 
+      let tempNote = root(el).find('.m_tinfo .m_pozn').text()
+
       let terminData: TerminData = {
         termin: root(el).find('span.hlavni').text(),
         type: cleanType(
@@ -105,19 +107,20 @@ export const scrape = async (scrapperClient: AxiosInstance): Promise<Array<Subje
         ),
         registered: reg[0].split(' ')[0] === 'registrován' ? true : false,
         registeredNote: reg[0].split(' - ')[1] ? reg[0].split(' - ')[1] : null,
+        note: tempNote ? tempNote : null,
         examiner: root(el).find('.m_tinfo a').text(),
         examinerLink:
           'https://www.vut.cz' + root(el).find('.m_tinfo a').attr('href'),
         room: root(el).find('.bs_ttip').text(),
         spots: {
           taken: Number(num[0]),
-          total: Number(num[1]),
-          free: Number(num[1]) - Number(num[0])
+          total: isNaN(Number(num[1])) ? 9999 : Number(num[1]),
+          free: isNaN(Number(num[1])) ? 9999 : Number(num[1]) - Number(num[0])
         },
         filled: num[0] === num[1] ? true : false,
         onlyExamStudents: reg[2].split(': ')[1] === 'ano' ? true : false,
         title: title,
-        hash: hash(`${root(el).find('span.hlavni').text()},${root(el).find('.m_tinfo a').text()}`),
+        hash: hash(`${root(el).find('span.hlavni').text()},${root(el).find('.m_tinfo a').text()},${tempNote ? tempNote : ''}`),
       };
       termsDataArray.push(terminData);
     });

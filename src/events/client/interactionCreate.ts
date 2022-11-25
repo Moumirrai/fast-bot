@@ -37,7 +37,8 @@ const MessageEvent: iEvent = {
         });
       }
       await modal.execute({ client, interaction });
-    } else if (interaction.isButton()) {
+    } /*
+    else if (interaction.isButton()) {
       if (!interaction.customId) {
         return interaction.reply({
           content: 'There was an error while executing this button!',
@@ -56,6 +57,24 @@ const MessageEvent: iEvent = {
       await button.execute({ client, interaction, param: params[0] });
       //console.log(interaction.customId);
     }
+    */
+   else if (interaction.isSelectMenu()) {
+      if (!interaction.customId) {
+        return interaction.reply({
+          content: 'There was an error while executing this select menu!',
+          ephemeral: true
+        });
+      }
+      const menu = client.menus.get(interaction.customId);
+      if (!menu) {
+        return interaction.reply({
+          content: 'There was an error while executing this select menu!',
+          ephemeral: true
+        });
+      }
+      await menu.execute({ client, interaction });
+    }
+
     /*
     if (interaction.type !== 2) return;
     const command = client.commands.get(interaction.commandName);

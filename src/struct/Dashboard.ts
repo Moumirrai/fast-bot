@@ -1,7 +1,14 @@
 import { UserData } from 'm-bot';
 import { Core } from './Core';
 import Logger from './Logger';
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, SelectMenuBuilder, ButtonStyle } from 'discord.js';
+import {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  SelectMenuBuilder,
+  ButtonStyle
+} from 'discord.js';
+import { TerminData } from 'vut-scraper';
 
 export default class dashboard {
   /**
@@ -20,11 +27,11 @@ export default class dashboard {
         .then((message) => message.delete())
         .catch((err) => {
           Logger.error(err);
-          return
+          return;
         });
     }
     await this.generateMessage(client);
-    return
+    return;
   }
 
   public static async generateMessage(client: Core) {
@@ -33,7 +40,7 @@ export default class dashboard {
       .send({ embeds: [exampleEmbed] })
       .catch((err) => {
         Logger.error(err);
-        return
+        return;
       });
     if (message) {
       let oldData = client.db.user.get('data') as UserData;
@@ -50,39 +57,123 @@ export default class dashboard {
 
   public static async update(client: Core) {
     let data = client.db.user.get('data') as UserData;
-    let oldTerms = client.scrapper.lastData
-      ? client.scrapper.lastData.map((subject) => subject.terms).flat()
-      : [];
+    let oldTerms = client.scrapper.lastData;
+    let category = client.db.user.get('category') as string;
+    let filtereTerms: Array<TerminData> = [];
 
-    let watchListTerms = oldTerms.filter((term) =>
-      data.watchlist.includes(term.hash)
-    );
-
-    let embed = new EmbedBuilder()
-      .setTitle('Dashboard')
-      .setColor(0xffcc00)
-      .setDescription(
-        `You are watching ${data.watchlist.length} terms`
-      )
-    if (watchListTerms.length > 0) {
-      embed.addFields({ name: 'Watchlist', value: watchListTerms.map((term) => { return `${term.title} - **${term.termin}**`}).join('\n') });
+    if (oldTerms) {
+      let filteredSubjects = oldTerms;
+      if (category) {
+        if (category !== 'all') {
+          filteredSubjects = oldTerms.filter((subject) => {
+            return subject.title === category;
+          });
+        }
+      }
+      filtereTerms = filteredSubjects.map((subject) => subject.terms).flat();
+    } else {
+      filtereTerms = [];
     }
 
-    //create action row
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder()
-          .setCustomId('addWatcher')
-          .setLabel('Add watcher')
-          .setStyle(ButtonStyle.Primary),
-        new ButtonBuilder()
-          .setCustomId('removeWatcher')
-          .setLabel('Remove watcher')
-          .setStyle(ButtonStyle.Danger),
-    ) as ActionRowBuilder<ButtonBuilder>;
+    let watchListTerms = filtereTerms
+      ? (filtereTerms as Array<TerminData>).filter((term) =>
+          data.watchlist.includes(term.hash)
+        )
+      : [];
 
-    client.userChannel.send({
+    let embed = new EmbedBuilder()
+      //.setTitle('Dashboard')
+      .setTitle('Running')
+      .setColor(0xffcc00)
+      /*
+      .setDescription(`You are watching ${data.watchlist.length} terms`)
+      .setFooter({ text: `Filter - ${category ? category : 'all'}` });
+      
+    if (watchListTerms.length > 0) {
+      embed.addFields({
+        name: 'Watchlist',
+        value: watchListTerms
+          .map((term, index) => {
+            return `${index}. ${term.title} - **${term.termin}**`;
+          })
+          .join('\n')
+      });
+    }
+    */
+
+    let components: Array<ActionRowBuilder<SelectMenuBuilder>> = [];
+    //create action row
+    const subjectRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+      new SelectMenuBuilder()
+        .setCustomId('selectSubject')
+        .setPlaceholder('Select a subject')
+        .addOptions(
+          client.scrapper.lastData.map((subject) => {
+            return {
+              label: subject.title,
+              value: subject.title
+            };
+          })
+        )
+        .addOptions([
+          {
+            label: 'All',
+            value: 'all'
+          }
+        ])
+    );
+    components.push(subjectRow);
+
+    let watchTermRow: ActionRowBuilder<SelectMenuBuilder> = null;
+
+    if (filtereTerms && filtereTerms.length > 0) {
+      watchTermRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+        new SelectMenuBuilder()
+          .setCustomId('watchTerm')
+          .setPlaceholder('Watch term')
+          .setMaxValues(filtereTerms.length)
+          .setMinValues(1)
+          .addOptions(
+            filtereTerms.map((term) => {
+              return {
+                label: `${term.termin} - ${term.filled ? 'FULL' : `${term.spots.taken}/${term.spots.total}`}`,
+                value: String(term.hash),
+                description: term.title
+              };
+            })
+          )
+      );
+      components.push(watchTermRow);
+    }
+
+    let unwatchTermRow: ActionRowBuilder<SelectMenuBuilder> = null;
+
+    if (watchListTerms.length > 0) {
+      unwatchTermRow = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+        new SelectMenuBuilder()
+          .setCustomId('unwatchTerm')
+          .setPlaceholder('Remove watchers')
+          .setMaxValues(watchListTerms.length)
+          .setMinValues(1)
+          .addOptions(
+            watchListTerms.map((term) => {
+              return {
+                label: term.termin,
+                value: String(term.hash),
+                description: term.title
+              };
+            })
+          )
+      );
+      components.push(unwatchTermRow);
+    }
+
+
+
+
+    client.dashboardMessage.edit({
       embeds: [embed],
-      components: oldTerms ? [row] : []
+      /*components: components*/
     });
   }
 }

@@ -34,6 +34,20 @@ declare module 'm-bot' {
     execute: (commandArgs: ButtonArgs) => Promise<unknown>;
   }
 
+  export interface Menu {
+    id: string;
+    ratelimit: {
+      window: number;
+      limit: number;
+    }
+    execute: (commandArgs: MenuArgs) => Promise<unknown>;
+  }
+
+  export interface MenuArgs {
+    client: import('../../struct/Core').Core;
+    interaction: import('discord.js').SelectMenuInteraction;
+  }
+
   export interface ButtonArgs {
     client: import('../../struct/Core').Core;
     interaction: import('discord.js').ButtonInteraction;
