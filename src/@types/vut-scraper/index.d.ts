@@ -10,6 +10,12 @@ declare module 'vut-scraper' {
     subjects: Array<SavedSubjects>;
   }
 
+  export interface Pair {
+    hash: number;
+    new: TerminData;
+    old: TerminData;
+  }
+
   export interface SubjectData {
     title: string;
     terms: Array<TerminData>;

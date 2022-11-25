@@ -10,7 +10,7 @@ const MessageEvent: iEvent = {
   name: 'interactionCreate',
   async execute(client: Core, interaction: Interaction) {
     if (interaction.user.id !== client.config.owner) {
-      if (interaction.isChatInputCommand() || interaction.isModalSubmit()){
+      if (interaction.isChatInputCommand() || interaction.isModalSubmit() || interaction.isButton()) {
         return interaction.reply({
           content: `You can't use this command!`,
           ephemeral: true
@@ -38,7 +38,23 @@ const MessageEvent: iEvent = {
       }
       await modal.execute({ client, interaction });
     } else if (interaction.isButton()) {
-      console.log(interaction.customId);
+      if (!interaction.customId) {
+        return interaction.reply({
+          content: 'There was an error while executing this button!',
+          ephemeral: true
+        });
+      }
+      let params = interaction.customId.split('#');
+      let buttonType = params.shift();
+      const button = client.buttons.get(buttonType);
+      if (!button) {
+        return interaction.reply({
+          content: 'There was an error while executing this button!',
+          ephemeral: true
+        });
+      }
+      await button.execute({ client, interaction, param: params[0] });
+      //console.log(interaction.customId);
     }
     /*
     if (interaction.type !== 2) return;

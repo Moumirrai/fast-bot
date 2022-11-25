@@ -24,6 +24,21 @@ declare module 'm-bot' {
     }
     execute: (commandArgs: ModalArgs) => Promise<unknown>;
   }
+
+  export interface Button {
+    id: string;
+    ratelimit: {
+      window: number;
+      limit: number;
+    }
+    execute: (commandArgs: ButtonArgs) => Promise<unknown>;
+  }
+
+  export interface ButtonArgs {
+    client: import('../../struct/Core').Core;
+    interaction: import('discord.js').ButtonInteraction;
+    param: string;
+  }
   export interface iSlashCommand {
     options: import('discord.js').ApplicationCommandOptionData[];
   }
@@ -41,7 +56,7 @@ declare module 'm-bot' {
   }
 
   export interface UserData {
-    watchlist: object[];
+    watchlist: Array<number>;
     notifyOnNew: boolean;
     message: string;
   }

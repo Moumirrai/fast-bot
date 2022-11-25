@@ -1,7 +1,7 @@
 import { UserData } from 'm-bot';
 import { Core } from './Core';
 import Logger from './Logger';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, SelectMenuBuilder, ButtonStyle } from 'discord.js';
 
 export default class dashboard {
   /**
@@ -46,5 +46,43 @@ export default class dashboard {
     } else {
       return Logger.error('Message not sent');
     }
+  }
+
+  public static async update(client: Core) {
+    let data = client.db.user.get('data') as UserData;
+    let oldTerms = client.scrapper.lastData
+      ? client.scrapper.lastData.map((subject) => subject.terms).flat()
+      : [];
+
+    let watchListTerms = oldTerms.filter((term) =>
+      data.watchlist.includes(term.hash)
+    );
+
+    let embed = new EmbedBuilder()
+      .setTitle('Dashboard')
+      .setColor(0xffcc00)
+      .setDescription(
+        `You are watching ${data.watchlist.length} terms`
+      )
+    if (watchListTerms.length > 0) {
+      embed.addFields({ name: 'Watchlist', value: watchListTerms.map((term) => { return `${term.title} - **${term.termin}**`}).join('\n') });
+    }
+
+    //create action row
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder()
+          .setCustomId('addWatcher')
+          .setLabel('Add watcher')
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId('removeWatcher')
+          .setLabel('Remove watcher')
+          .setStyle(ButtonStyle.Danger),
+    ) as ActionRowBuilder<ButtonBuilder>;
+
+    client.userChannel.send({
+      embeds: [embed],
+      components: oldTerms ? [row] : []
+    });
   }
 }

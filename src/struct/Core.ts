@@ -3,7 +3,7 @@ import { Client, GatewayIntentBits, Partials, Collection, SlashCommandBuilder, D
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import { Command, Modal, Database } from 'm-bot';
+import { Command, Modal, Database, Button } from 'm-bot';
 //import { connect, ConnectOptions } from 'mongoose';
 import { ScraperCore } from './scraper/client';
 import Functions from './Functions';
@@ -32,6 +32,7 @@ export class Core extends Client {
   public logger = Logger;
   public commands = new Collection<string, Command>();
   public modals = new Collection<string, Modal>();
+  public buttons = new Collection<string, Button>();
   public status = 1;
   public functions = Functions;
   public dashboard = dashboard;
@@ -57,6 +58,7 @@ export class Core extends Client {
       await this.loadEvents();
       await this.loadCommands();
       await this.loadModals();
+      await this.loadButtons();
       await this.login(this.config.token);
       this.scrapper = new ScraperCore(this);
     } catch (error) {
@@ -115,6 +117,23 @@ export class Core extends Client {
       this.modals.set(modalId, modal);
     }
     this.logger.info(`${this.modals.size} modals loaded!`);
+  }
+
+  private async loadButtons(): Promise<void> {
+    const files = readdirSync(resolve(__dirname, '..', 'interactions', 'buttons'));
+    for (const file of files) {
+      const button = (await import(resolve(__dirname, '..', 'interactions', 'buttons', file)))
+        .default;
+      const buttonId = (button.id as string)
+      if (this.buttons.has(buttonId)) {
+        this.logger.warn(
+          `Button with ID ${buttonId} already exists, skipping...`
+        );
+        continue;
+      }
+      this.buttons.set(buttonId, button);
+    }
+    this.logger.info(`${this.buttons.size} buttons loaded!`);
   }
 
   private async loadEvents(): Promise<void> {
