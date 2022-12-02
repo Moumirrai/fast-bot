@@ -65,7 +65,7 @@ export class ScraperCore implements ScraperInterface {
 
     let newTermsHashesSet = new Set(newTerms.map((term) => hash(term)));
     let oldTermsHashesSet = new Set(oldTerms.map((term) => hash(term)));
-
+    this.client.db.scrapper.set('data', newData);
     if (userData.notifyOnNew) {
       let newTermsHashesSetDifference = new Set(
         [...newTermsHashesSet].filter((x) => !oldTermsHashesSet.has(x))
@@ -175,8 +175,6 @@ export class ScraperCore implements ScraperInterface {
     */
 
     await this.client.dashboard.update(this.client);
-
-    this.client.db.scrapper.set('data', newData);
   }
 
   private async sendSpotAvailable(term: TerminData): Promise<void> {
