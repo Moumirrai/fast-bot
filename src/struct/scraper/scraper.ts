@@ -1,4 +1,3 @@
-//use axios to login to https://www.vut.cz/en/login/in using post request and form data, and then return session cookie
 import FormData from 'form-data';
 import axios from 'axios';
 import { AxiosInstance } from 'axios';

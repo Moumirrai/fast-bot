@@ -3,13 +3,11 @@ import { Client, GatewayIntentBits, Partials, Collection, SlashCommandBuilder, D
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import { Command, Modal, Database, Button, Menu } from 'm-bot';
-//import { connect, ConnectOptions } from 'mongoose';
+import { Command, Menu } from 'm-bot';
 import { ScraperCore } from './scraper/client';
 import Functions from './Functions';
 import dashboard from './Dashboard';
 import Embeds from './Embeds';
-import Mongo from './Mongo';
 import Enmap from 'enmap';
 
 export class Core extends Client {
@@ -31,8 +29,6 @@ export class Core extends Client {
   }
   public logger = Logger;
   public commands = new Collection<string, Command>();
-  public modals = new Collection<string, Modal>();
-  //public buttons = new Collection<string, Button>();
   public menus = new Collection<string, Menu>();
   public status = 1;
   public functions = Functions;
@@ -40,7 +36,6 @@ export class Core extends Client {
   public dashboardMessage: Message;
   public userChannel: DMChannel;
   public embeds = Embeds;
-  public mongo = Mongo;
   public db = {
     scrapper: new Enmap({
       name: "scrapper",
@@ -58,34 +53,16 @@ export class Core extends Client {
       this.logger.info('Initializing...');
       await this.loadEvents();
       await this.loadCommands();
-      await this.loadModals();
       await this.loadMenus();
-      //await this.loadButtons();
       await this.login(this.config.token);
       this.scrapper = new ScraperCore(this);
     } catch (error) {
-      console.log('pepe' + '1')
+      console.log('Error while starting - CODE' + '001')
       this.logger.error(error);
       this.destroy();
       process.exit(1);
     }
   }
-
-  /*
-  private async mongoDB(): Promise<void> {
-    connect(this.config.mongodb_uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      autoIndex: false
-    } as ConnectOptions)
-      .then(() => {
-        return this.logger.info('Connected to MongoDB');
-      })
-      .catch((err) => {
-        return this.logger.error('MongoDB connection error: ' + err);
-      });
-  }
-  */
 
   private async loadCommands(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'interactions', 'commands'));
@@ -103,42 +80,6 @@ export class Core extends Client {
     }
     this.logger.info(`${this.commands.size} commands loaded!`);
   }
-
-  private async loadModals(): Promise<void> {
-    const files = readdirSync(resolve(__dirname, '..', 'interactions', 'modals'));
-    for (const file of files) {
-      const modal = (await import(resolve(__dirname, '..', 'interactions', 'modals', file)))
-        .default;
-      const modalId = (modal.id as string)
-      if (this.modals.has(modalId)) {
-        this.logger.warn(
-          `Modal with ID ${modalId} already exists, skipping...`
-        );
-        continue;
-      }
-      this.modals.set(modalId, modal);
-    }
-    this.logger.info(`${this.modals.size} modals loaded!`);
-  }
-
-  /*
-  private async loadButtons(): Promise<void> {
-    const files = readdirSync(resolve(__dirname, '..', 'interactions', 'buttons'));
-    for (const file of files) {
-      const button = (await import(resolve(__dirname, '..', 'interactions', 'buttons', file)))
-        .default;
-      const buttonId = (button.id as string)
-      if (this.buttons.has(buttonId)) {
-        this.logger.warn(
-          `Button with ID ${buttonId} already exists, skipping...`
-        );
-        continue;
-      }
-      this.buttons.set(buttonId, button);
-    }
-    this.logger.info(`${this.buttons.size} buttons loaded!`);
-  }
-  */
 
   private async loadMenus(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'interactions', 'menus'));
