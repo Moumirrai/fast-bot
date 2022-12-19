@@ -29,6 +29,7 @@
     "node-fetch-cookies": "^2.0.4",
     "node-html-parser": "^6.1.4",
     "rate-limiter-flexible": "^2.3.7",
+    "tsc": "^2.0.4",
     "winston": "^3.8.2"
   },
   "devDependencies": {
