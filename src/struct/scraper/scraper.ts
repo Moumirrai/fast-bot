@@ -18,7 +18,7 @@ export const login = async (
       scrapper.scrapperClient = wrapper(axios.create({ jar, withCredentials: true }));
     }
 
-    let initResponse = await scrapper.scrapperClient.get(
+    const initResponse = await scrapper.scrapperClient.get(
       'https://www.vut.cz/en/login/login'
     );
 
@@ -56,13 +56,13 @@ export const logout = async (scrapperClient: AxiosInstance) => {
 };
 
 export const scrape = async (scrapperClient: AxiosInstance): Promise<Array<SubjectData>> => {
-  let response = await scrapperClient.get(
+  const response = await scrapperClient.get(
     'https://www.vut.cz/studis/student.phtml?sn=terminy_zk'
   );
   fs.writeFileSync('terms.html', response.data);
   const root = load(response.data);
 
-  let returnData: Array<SubjectData> = [];
+  const returnData: Array<SubjectData> = [];
 
   const subjects = root('.m_ppzc');
 
@@ -73,29 +73,29 @@ export const scrape = async (scrapperClient: AxiosInstance): Promise<Array<Subje
     const termins = root(el).find(
       '.m_termin.m_tsner_zje, .m_termin.m_tsreg_zr'
     );
-    let termsDataArray: Array<TerminData> = [];
+    const termsDataArray: Array<TerminData> = [];
     termins.each((i, el) => {
 
-      let reg = root(el)
+      const reg = root(el)
         .find('.m_tinfo')
         .contents()
         .filter((i, el) => el.type === 'text')
         .text()
         .split('\n');
-      let num = extractReg(reg);
+      const num = extractReg(reg);
 
       root(el)
         .find('.m_tinfo .m_nespl_pod')
         .each((i, el) => {
-          let text = root(el).text();
+          const text = root(el).text();
           if (text && text !== '') {
             num[i] = text;
           }
         });
 
-      let tempNote = root(el).find('.m_tinfo .m_pozn').text()
+      const tempNote = root(el).find('.m_tinfo .m_pozn').text()
 
-      let terminData: TerminData = {
+      const terminData: TerminData = {
         termin: root(el).find('span.hlavni').text(),
         type: cleanType(
           root(el)
