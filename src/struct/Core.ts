@@ -9,7 +9,6 @@ import { ScraperCore } from './scraper/client';
 import Functions from './Functions';
 import dashboard from './Dashboard';
 import Embeds from './Embeds';
-import Mongo from './Mongo';
 import Enmap from 'enmap';
 
 export class Core extends Client {
@@ -40,7 +39,6 @@ export class Core extends Client {
   public dashboardMessage: Message;
   public userChannel: DMChannel;
   public embeds = Embeds;
-  public mongo = Mongo;
   public db = {
     scrapper: new Enmap({
       name: "scrapper",
@@ -62,7 +60,7 @@ export class Core extends Client {
       await this.loadMenus();
       //await this.loadButtons();
       await this.login(this.config.token);
-      this.scrapper = new ScraperCore(this);
+      //this.scrapper = new ScraperCore(this);
     } catch (error) {
       console.log('pepe' + '1')
       this.logger.error(error);

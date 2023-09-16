@@ -1,10 +1,10 @@
-import { EmbedBuilder, MessageOptions } from 'discord.js';
+import { EmbedBuilder, BaseMessageOptions } from 'discord.js';
 import { config } from '../config/config';
 
 export default class Embeds {
   public static default(
     message: string,
-    options?: MessageOptions
+    options?: BaseMessageOptions
   ): EmbedBuilder {
     return new EmbedBuilder({
       color: config.embed.colors.default,
@@ -15,7 +15,7 @@ export default class Embeds {
 
   public static error(
     message: string,
-    options?: MessageOptions
+    options?: BaseMessageOptions
   ): EmbedBuilder {
     return new EmbedBuilder({
       color: config.embed.colors.error,
@@ -26,7 +26,7 @@ export default class Embeds {
 
   public static success(
     message: string,
-    options?: MessageOptions
+    options?: BaseMessageOptions
   ): EmbedBuilder {
     return new EmbedBuilder({
       color: config.embed.colors.success,
@@ -37,7 +37,7 @@ export default class Embeds {
 
   public static warning(
     message: string,
-    options?: MessageOptions
+    options?: BaseMessageOptions
   ): EmbedBuilder {
     return new EmbedBuilder({
       color: config.embed.colors.warning,

@@ -1,7 +1,7 @@
 {
-  "name": "fast-bot",
+  "name": "bot-template-ts",
   "version": "1.0.0",
-  "description": "Discord bot template written in TypeScript.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -14,18 +14,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.5.0",
-    "axios-cookiejar-support": "^4.0.7",
+    "@types/node-fetch": "^2.6.2",
+    "axios": "^0.27.2",
+    "axios-cookiejar-support": "^4.0.3",
     "cheerio": "^1.0.0-rc.12",
-    "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1",
-    "enmap": "^5.9.8",
-    "hash-it": "^6.0.0",
-    "mongoose": "^7.5.0",
+    "discord.js": "^14.3.0",
+    "dotenv": "^14.3.2",
+    "enmap": "^5.9.2",
+    "express": "^4.18.2",
+    "form-data": "^4.0.0",
+    "hash-it": "^5.0.2",
+    "mongoose": "^6.4.6",
     "node-cron": "^3.0.2",
-    "winston": "^3.10.0"
+    "node-fetch-cookies": "^2.0.4",
+    "node-html-parser": "^6.1.4",
+    "rate-limiter-flexible": "^2.3.7",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
-    "tsc-watch": "^6.0.4"
+    "@types/express": "^4.17.14",
+    "tsc-watch": "^4.6.0"
   }
 }
